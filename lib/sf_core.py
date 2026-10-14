@@ -404,19 +404,23 @@ def remove_style(name: Optional[str] = None, keep_backups: bool = True) -> Dict[
         return result
 
     style_file = installed_style_path(target_name) if target_name else None
-    if style_file and style_file.exists():
+    file_exists = style_file is not None and style_file.is_file()
+    active_present = isinstance(active, str) and bool(active)
+
+    # TD-CORE-001：卸载只做一份统一的卸载前备份（settings.json 快照）。
+    # 此前删 style 文件与改 settings 键各备份一次，同秒产生两份相同内容。
+    if file_exists or active_present:
         b = backup_settings("uninstall")
         if b:
             result["backups"].append(str(b))
+
+    if style_file is not None and file_exists:
         style_file.unlink()
         result["style_file_removed"] = True
-    elif style_file:
+    elif style_file is not None:
         result["warnings"].append(f"style 文件不存在: {style_file}")
 
-    if isinstance(active, str) and active:
-        b = backup_settings("uninstall")
-        if b and str(b) not in result["backups"]:
-            result["backups"].append(str(b))
+    if active_present:
         settings = dict(settings)
         settings.pop(MANAGED_KEY, None)
         atomic_write_text(settings_path(), dump_settings(settings), mode=0o600)

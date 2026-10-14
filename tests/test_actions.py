@@ -72,9 +72,8 @@ class TestRemoveStyle:
         assert not installed_style_path("default").exists()
         settings, _ = load_settings_raw()
         assert "outputStyle" not in settings
-        # TD-CORE-001（在册 bug）：现状会产生 2 份相同备份；宽松断言现状，
-        # 批次 3 修复后收紧为 == 1。
-        assert 1 <= len(result["backups"]) <= 2
+        # TD-CORE-001 已修复：卸载只产生一份统一备份（修复前为 2 份同内容）。
+        assert len(result["backups"]) == 1
 
     def test_missing_style_file_warns(self, sandbox):
         apply_style("default", "default")
