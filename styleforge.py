@@ -261,7 +261,8 @@ def cmd_doctor(args: argparse.Namespace, out: Out) -> int:
 
 
 def cmd_preview(args: argparse.Namespace, out: Out) -> int:
-    out.header("preview")
+    if not args.raw:
+        out.header("preview")  # TD-CLI-004：raw 模式直写正文，标题行不得泄漏进重定向
     try:
         body = preview_style(args.pack)
     except StyleForgeError as exc:
