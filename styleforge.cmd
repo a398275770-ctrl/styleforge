@@ -14,7 +14,7 @@ if not defined PY where python >nul 2>nul && set "PY=python"
 if not defined PY where python3 >nul 2>nul && set "PY=python3"
 
 if not defined PY (
-    echo 未找到 Python。请先安装 Python 3.8+ 并加入 PATH。 1>&2
+    echo 未找到 Python。请先安装 Python 3.10+ 并加入 PATH。 1>&2
     exit /b 127
 )
 

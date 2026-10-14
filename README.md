@@ -46,6 +46,8 @@ Claude Code **持久化提示词注入器**。基于 `settings.json` 的 `output
 
 ## 快速开始
 
+> 前置：Python **3.10+**（3.14 开发验证）。纯标准库，无需安装任何依赖。
+
 ```bash
 # 一键安装（默认 pack）
 ./one-click-install.sh
@@ -106,10 +108,12 @@ styleforge.cmd doctor
 
 ## 自定义 pack
 
+> 两个文件**均为必填**：缺失任何一个，install 都会报错退出（TD-CORE-002，2026-10-14 经实测澄清）。
+
 ```
 packs/<pack名>/
 ├── claude-project-rules.md     ← 必填，system 层内容
-└── claude-append-prompt.md     ← 可选，append 层内容
+└── claude-append-prompt.md     ← 必填，append 层内容
 ```
 
 两个文件会按此顺序拼成 style 正文，各自剥掉开头的 `# H1`。
@@ -150,14 +154,19 @@ styleforge 只写一个 JSON 键，复杂度掉一个数量级。
 ```
 styleforge/
 ├── styleforge.py              CLI 主程序
+├── lib/sf_core.py             核心库
 ├── one-click-install.sh       一键安装
 ├── one-click-uninstall.sh     一键卸载
 ├── styleforge.cmd             Windows 一键入口
-├── lib/sf_core.py             核心库
+├── LICENSE                    MIT 许可证
+├── AGENTS.md                  入口地图（目录，非百科）
+├── ARCHITECTURE.md            分层架构与设计决策
 ├── packs/default/             默认 pack（与原版 exe 内 payload 逐字节相同）
 │   ├── claude-project-rules.md     770 B  md5 0164424cca30ee1961d273ce8091649b
 │   └── claude-append-prompt.md     202 B  md5 80ef73f84f2c589b524108dfecf01f90
-└── packs/<你的>/              自定义 pack
+├── packs/<你的>/              自定义 pack
+├── scripts/analysis/          度量与文档校验脚本
+└── docs/                      记录系统（索引见 docs/index.md）
 ```
 
 ## 已知限制
