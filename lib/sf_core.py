@@ -32,7 +32,7 @@ import stat
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 VERSION = "1.0.0"
 MANAGED_KEY = "outputStyle"
@@ -104,7 +104,7 @@ def installed_style_path(name: str) -> Path:
 # ------------------------------------------------------------------ json io
 
 
-def load_settings_raw(path: Optional[Path] = None) -> Tuple[Dict[str, Any], str]:
+def load_settings_raw(path: Path | None = None) -> tuple[dict[str, Any], str]:
     """Return (parsed, raw_text). Missing file -> ({}, '')."""
     p = path or settings_path()
     if not p.exists():
@@ -119,7 +119,7 @@ def load_settings_raw(path: Optional[Path] = None) -> Tuple[Dict[str, Any], str]
     return data, raw
 
 
-def dump_settings(data: Dict[str, Any]) -> str:
+def dump_settings(data: dict[str, Any]) -> str:
     return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 
@@ -178,7 +178,7 @@ def sha256_bytes(data: bytes) -> str:
 # ------------------------------------------------------------------ backup
 
 
-def backup_settings(tag: Optional[str] = None) -> Optional[Path]:
+def backup_settings(tag: str | None = None) -> Path | None:
     """Timestamped copy of settings.json next to the original."""
     p = settings_path()
     if not p.exists():
@@ -198,7 +198,7 @@ def backup_settings(tag: Optional[str] = None) -> Optional[Path]:
     return target
 
 
-def list_settings_backups() -> List[Path]:
+def list_settings_backups() -> list[Path]:
     p = settings_path()
     if not p.parent.is_dir():
         return []
@@ -230,7 +230,7 @@ def normalize_style_name(name: str) -> str:
 # ------------------------------------------------------------------ packs
 
 
-def list_packs() -> List[str]:
+def list_packs() -> list[str]:
     root = packs_root()
     if not root.is_dir():
         return []
@@ -274,12 +274,12 @@ def strip_markdown_h1(content: str) -> str:
     return content
 
 
-def parse_frontmatter(content: str) -> Tuple[Dict[str, str], str]:
+def parse_frontmatter(content: str) -> tuple[dict[str, str], str]:
     """Split YAML-ish frontmatter (key: value lines) from the body."""
     match = FRONTMATTER_RE.match(content)
     if not match:
         return {}, content
-    meta: Dict[str, str] = {}
+    meta: dict[str, str] = {}
     for line in match.group(1).splitlines():
         if ":" not in line:
             continue
@@ -319,12 +319,12 @@ def compose_style_file(name: str, pack: str, description: str = "") -> str:
 # ------------------------------------------------------------------ state
 
 
-def current_state() -> Dict[str, Any]:
+def current_state() -> dict[str, Any]:
     """Read-only view of what is installed right now."""
     settings, _ = load_settings_raw()
     active = settings.get(MANAGED_KEY)
     style_file = installed_style_path(active) if isinstance(active, str) and active else None
-    meta: Dict[str, str] = {}
+    meta: dict[str, str] = {}
     exists = False
     if style_file is not None and style_file.is_file():
         exists = True
@@ -345,8 +345,8 @@ def current_state() -> Dict[str, Any]:
 
 
 def apply_style(
-    name: str, pack: str, description: str = "", backup_tag: Optional[str] = None
-) -> Dict[str, Any]:
+    name: str, pack: str, description: str = "", backup_tag: str | None = None
+) -> dict[str, Any]:
     """Install one style: write the .md, then point settings.json at it."""
     name = normalize_style_name(name)
     pack_dir(pack)  # validate early
@@ -359,7 +359,7 @@ def apply_style(
     settings, _ = load_settings_raw()
     settings_changed = settings.get(MANAGED_KEY) != name
 
-    result: Dict[str, Any] = {
+    result: dict[str, Any] = {
         "name": name,
         "pack": pack,
         "style_file": str(target),
@@ -373,7 +373,7 @@ def apply_style(
         result["noop"] = True
         return result
 
-    original_style: Optional[str] = read_bytes_as_text(target) if style_existed else None
+    original_style: str | None = read_bytes_as_text(target) if style_existed else None
     atomic_write_text(target, content)
     if settings_changed:
         b = backup_settings(backup_tag)
@@ -399,13 +399,13 @@ def apply_style(
     return result
 
 
-def remove_style(name: Optional[str] = None, keep_backups: bool = True) -> Dict[str, Any]:
+def remove_style(name: str | None = None, keep_backups: bool = True) -> dict[str, Any]:
     """Uninstall. Defaults to whatever settings.json currently points at."""
     settings, _ = load_settings_raw()
     active = settings.get(MANAGED_KEY)
     target_name = name or (active if isinstance(active, str) else None)
 
-    result: Dict[str, Any] = {
+    result: dict[str, Any] = {
         "removed_style": target_name,
         "settings_cleared": False,
         "style_file_removed": False,
@@ -444,7 +444,7 @@ def remove_style(name: Optional[str] = None, keep_backups: bool = True) -> Dict[
     return result
 
 
-def restore_settings(backup: Path) -> Dict[str, Any]:
+def restore_settings(backup: Path) -> dict[str, Any]:
     """Point settings.json back at a .styleforge-bak file."""
     backup = Path(backup).expanduser()
     if not backup.exists():

@@ -7,7 +7,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
 
@@ -38,7 +38,7 @@ class Out:
     def __init__(self, json_mode: bool, quiet: bool = False):
         self.json_mode = json_mode
         self.quiet = quiet
-        self._payload: Dict[str, Any] = {"schema": "styleforge/v1", "version": VERSION}
+        self._payload: dict[str, Any] = {"schema": "styleforge/v1", "version": VERSION}
         self._exit = EXIT_OK
 
     def set(self, key: str, value: Any) -> None:
@@ -214,7 +214,7 @@ def cmd_packs(args: argparse.Namespace, out: Out) -> int:
 def cmd_doctor(args: argparse.Namespace, out: Out) -> int:
     """Check that the mechanism is actually live on this machine."""
     out.header("doctor")
-    checks: List[Dict[str, Any]] = []
+    checks: list[dict[str, Any]] = []
 
     def check(label: str, ok: bool, detail: str = "") -> None:
         checks.append({"check": label, "ok": ok, "detail": detail})
@@ -343,7 +343,7 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser()
     try:

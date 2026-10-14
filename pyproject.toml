@@ -9,8 +9,8 @@ target-version = "py310"
 extend-exclude = [".venv", "packs"]
 
 [tool.ruff.lint]
-# UP（typing 现代化）暂不启用：37 处存量改写属重构，待阶段 4 有测试保护后启用。
-select = ["E4", "E7", "E9", "F", "I", "W"]
+# UP（typing 现代化）于阶段 4 启用（此前 37 处存量，待测试保护就位）。
+select = ["E4", "E7", "E9", "F", "I", "W", "UP"]
 ignore = [
     # BrokenPipeError 出口需要兜底吞掉一切写失败（styleforge.py main），行为正确。
     "BLE001",
