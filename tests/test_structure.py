@@ -60,7 +60,7 @@ class TestEntryPoints:
 class TestVersionSingleSource:
     def test_version_declared_only_in_core(self):
         """版本唯一声明点（规则 §6.1）——修复：删除多余声明，改由 sf_core 引出。"""
-        version_decl = re.compile(r'^VERSION\s*=', re.MULTILINE)
+        version_decl = re.compile(r"^VERSION\s*=", re.MULTILINE)
         assert len(version_decl.findall(CORE.read_text(encoding="utf-8"))) == 1
         for other in (CLI, REPO / "pyproject.toml"):
             text = other.read_text(encoding="utf-8")

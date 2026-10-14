@@ -18,10 +18,11 @@ python3 styleforge.py preview --pack default --raw  # 预览将写入的字节
 python3 styleforge.py uninstall                # 删键删文件，保留备份
 python3 styleforge.py restore --backup <path>  # 从备份恢复 settings.json
 ./one-click-install.sh / ./one-click-uninstall.sh  # POSIX 一键入口
-python3 -I scripts/analysis/repo_metrics.py .  # 度量报告（热点/指纹/TODO）
+sh scripts/check.sh            # 全部门禁一条命令（lint/类型/测试/度量/文档/冒烟）
 ```
 
-测试与 lint：暂未建立（阶段 3/5 落地，见 `docs/exec-plans/active/harness-migration.md`）。
+工具链：`python3 -m venv .venv && .venv/bin/pip install ruff mypy pytest pytest-cov pip-audit`。
+pre-commit hook 已挂载（`.githooks/`）；豁免与各检查的修复指引见 `docs/gates.md`。
 
 ## 目录地图
 

@@ -1,0 +1,8 @@
+#!/bin/sh
+# 提交前门禁：与 CI 完全同一套检查（scripts/check.sh）。
+# 豁免方式：SKIP_SF_CHECK=1 git commit ...，并在 message 注明原因（docs/gates.md 豁免登记）。
+if [ -n "$SKIP_SF_CHECK" ]; then
+    echo "[pre-commit] SKIP_SF_CHECK 已设置，跳过门禁（记得在 message 里写原因）"
+    exit 0
+fi
+exec sh "$(dirname "$0")/../scripts/check.sh"

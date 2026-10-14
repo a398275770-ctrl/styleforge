@@ -1,0 +1,27 @@
+# CI：与本地 scripts/check.sh 完全同一套门禁（规则 §5 阶段 3 验收要求）。
+# 框架判定=其他类型（docs/CI.md §1），无打包发布流水线（规则 §3.4）。
+name: CI
+
+on:
+  push:
+    branches: [main, harnessing]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.14"]  # D6 决策：3.10+ 承诺，双版本背书
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: 安装工具链
+        run: pip install ruff mypy pytest pytest-cov pip-audit
+      - name: 全套门禁（与本地 check.sh 同源）
+        run: sh scripts/check.sh
+      - name: 依赖漏洞扫描（dev 工具链；运行时零依赖）
+        run: pip-audit

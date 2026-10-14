@@ -14,6 +14,7 @@
 | 文档 | 内容 | 校验状态 |
 |---|---|---|
 | [CI.md](CI.md) | 框架判定 + CI 决策记录 | doc_lint PASS |
+| [gates.md](gates.md) | 门禁清单：检查项/触发/失败含义/修复指引/豁免机制 | doc_lint PASS |
 | [QUALITY_SCORE.md](QUALITY_SCORE.md) | 按域质量评分与差距 | doc_lint PASS |
 | [SECURITY.md](SECURITY.md) | 安全模型、信任边界、已知问题 | doc_lint PASS |
 | [design-docs/index.md](design-docs/index.md) | 设计文档索引 | doc_lint PASS |
@@ -25,5 +26,4 @@
 
 ## 待建（随阶段推进）
 
-- `gates.md`：门禁清单（每项：检查名/触发时机/失败含义/修复指引）——阶段 3
 - `exec-plans/completed/`：已归档计划——阶段 4/5 逐批移入

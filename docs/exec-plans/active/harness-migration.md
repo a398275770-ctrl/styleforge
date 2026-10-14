@@ -192,6 +192,7 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 | 2026-10-14 | 1 | **决策全部落定，计划状态切换为已确认**：D4=MIT（公开）、D5=保持两份、D6=3.10+、D7=文档化、D8=上 Actions CI；等效 CI 决策同步落盘 `docs/CI.md` | `acb7ddd` | 用户逐个确认（一次一问）；D1–D8 全部闭合 |
 | 2026-10-14 | 1→2 | 远程仓库创建并推送完成：`https://github.com/a398275770-ctrl/styleforge`（公开，main + harnessing 双分支已跟踪）；TD-REPO-001 彻底关闭；**进入阶段 2（文档对齐）** | 本 commit | gh 认证自行恢复（前次 keyring 超时系瞬时故障），SSH 通道实测通过；仓库描述已填写 |
 | 2026-10-14 | 2 | **阶段 2 完成**：记录系统 8 件（LICENSE/AGENTS 60 行/ARCHITECTURE/core-beliefs/QUALITY_SCORE/SECURITY/index×2）+ 矛盾修正 4 处（README 必填化/注释/3.10+×3）+ `doc_lint.py` 门禁（死链/缺节反向实测均 exit 1） | `481c9be`、`0872510`、`fd7a672`、本 commit | 台账关闭 6 项（TD-CORE-002/004、TD-SCRIPTS-001/002、TD-DOCS-001/003），在册 8 项（P0×3 全在批次 2/3）；质量分 3.0→3.1 |
+| 2026-10-14 | 3 | **阶段 3 完成**：pyproject 工具链（lint/mypy 零违规基线）+ 88 用例最小测试集（沙箱铁律）+ `check.sh` 六步一条命令 + pre-commit hook + `ci.yml`（py3.10/3.14 矩阵 + pip-audit）+ `docs/gates.md`；**四类违规注入实测全部拦截**：① 越层 import→结构测试红 ② 501 行文件→repo_metrics 红 ③ 缓存入库→追踪检查红 ④ 死链/缺节→doc_lint 红（阶段 2 实测）；另注入缺陷抽查（禁用名字校验→6 用例红）×1 | `f05ea8b`、`c2f50a2`、本 commit | 台账关闭 3 项（TD-GATE-001/002、TD-PACKS-001），TD-TEST-001 转处理中；在册 6 项（P0×2：TD-CORE-003 批次 3、TD-TEST-001 补全批次 5）；CI 首跑结果待 push 后回填 |
 | | | | | **未改业务代码自证**：本阶段仅新增 `docs/exec-plans/`、`docs/CI.md`、`scripts/analysis/repo_metrics.py`、`prompt-history.txt` 四类文档/分析文件；`styleforge.py`、`lib/sf_core.py`、`one-click-*.sh`、`styleforge.cmd`、`README.md`、`packs/**`、`docs/HARNESS-RULES.md` 均未触碰（git 就位后首批提交可用 `git diff` 复核）。沙箱实验（临时 pack `__td_probe__` 与 `/tmp` 下 `STYLEFORGE_HOME`）已全部清理，仓库无残留 |
 
 ---
@@ -214,3 +215,14 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 - [x] 旧文档比对：README 三处矛盾已修（TD-CORE-002/TD-SCRIPTS-002/D6 版本声明）；docstring「0600」失实声明并入 TD-CORE-003 证据（批次 3 随代码修复）
 - [x] `QUALITY_SCORE.md` 8 域分数各有依据（台账 ID + 复算命令）
 - [x] 文档校验能失败：实测注入死链 → exit 1；实测删必填节 → exit 1（记录于 commit `fd7a672`）
+
+**阶段 3 验收对照**（2026-10-14 完成，规则 §5）：
+
+- [x] 非 Tauri：`docs/CI.md` 已记录「不适用」，未生成任何打包发布流水线（等效 CI 决策已按三问纪律逐条确认：公开/上 CI）
+- [x] 干净环境「安装→构建→测试」一条命令：`sh scripts/check.sh` 六步全绿（CI 同源；GitHub Actions 首跑结果回填见 §7）
+- [x] 故意引入越层依赖，门禁失败（实测：core 注入 `import styleforge` → 2 个结构测试红）
+- [x] 故意超长文件，门禁失败（实测：501 行探针文件 → repo_metrics exit 1）
+- [x] 故意留死链、删必填节，文档门禁失败（实测：阶段 2 记录）
+- [x] 每个门禁失败信息含修复指引（repo_metrics/doc_lint/结构测试断言消息均内置）
+- [x] 门禁本地一条命令复现（check.sh；解释器自动探测 .venv，不依赖激活）
+- [x] 豁免机制显式可审计（SKIP_SF_CHECK 显式跳过须在 message 注明原因；pyproject ignore 带理由注释；过期 noqa 由 RUF100 抓出；CI 不可绕过）
