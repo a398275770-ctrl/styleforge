@@ -16,8 +16,9 @@ Cross-platform notes:
   - Home resolution honours $HOME on every OS; os.path.expanduser('~') is only
     a fallback because on Windows it reads USERPROFILE and ignores a $HOME set
     by Git Bash / MSYS2.
-  - All writes are atomic (temp file + os.replace) with 0600 permissions where
-    the platform supports it.
+  - All writes are atomic (temp file + os.replace). settings.json is created
+    with 0600 and an existing file keeps its current permissions (TD-CORE-003);
+    style files are created 0644.
   - The shell entry points are plain POSIX sh; a .cmd twin covers Windows.
 """
 
@@ -27,6 +28,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -122,7 +124,16 @@ def dump_settings(data: Dict[str, Any]) -> str:
 
 
 def atomic_write_text(path: Path, content: str, mode: int = 0o644) -> None:
-    """Write text atomically; never leave a half-written settings file."""
+    """Write text atomically; never leave a half-written settings file.
+
+    Permissions (TD-CORE-003): an existing target keeps its current mode —
+    os.replace would otherwise widen a 0600 settings.json to the temp file's
+    mode. `mode` only applies when creating a new file.
+    """
+    try:
+        mode = stat.S_IMODE(os.stat(path).st_mode)  # 沿用已有权限
+    except FileNotFoundError:
+        pass
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(
         prefix=TEMP_PREFIX + path.name + ".", suffix=".tmp", dir=str(path.parent)
@@ -369,7 +380,7 @@ def apply_style(
             result["backups"].append(str(b))
         settings = dict(settings)
         settings[MANAGED_KEY] = name
-        atomic_write_text(settings_path(), dump_settings(settings))
+        atomic_write_text(settings_path(), dump_settings(settings), mode=0o600)
     result["noop"] = False
     return result
 
@@ -408,7 +419,7 @@ def remove_style(name: Optional[str] = None, keep_backups: bool = True) -> Dict[
             result["backups"].append(str(b))
         settings = dict(settings)
         settings.pop(MANAGED_KEY, None)
-        atomic_write_text(settings_path(), dump_settings(settings))
+        atomic_write_text(settings_path(), dump_settings(settings), mode=0o600)
         result["settings_cleared"] = True
 
     result["noop"] = False
@@ -428,7 +439,7 @@ def restore_settings(backup: Path) -> Dict[str, Any]:
     if not isinstance(data, dict):
         raise StyleForgeError("备份顶层必须是 object")
     b = backup_settings("pre-restore")
-    atomic_write_text(settings_path(), dump_settings(data))
+    atomic_write_text(settings_path(), dump_settings(data), mode=0o600)
     return {
         "restored_from": str(backup),
         "safety_backup": str(b) if b else None,

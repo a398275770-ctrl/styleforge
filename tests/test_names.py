@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from sf_core import StyleForgeError, normalize_style_name, pack_dir
 
 
