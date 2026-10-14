@@ -20,7 +20,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: 安装工具链
-        run: pip install ruff mypy pytest pytest-cov pip-audit
+        run: |
+          # 先拉新环境基线：py3.10 runner 预装 setuptools 79.0.1 有
+          # PYSEC-2026-3447（首跑实测），会被 pip-audit 正确拦截
+          pip install -U pip setuptools
+          pip install ruff mypy pytest pytest-cov pip-audit
       - name: 全套门禁（与本地 check.sh 同源）
         run: sh scripts/check.sh
       - name: 依赖漏洞扫描（dev 工具链；运行时零依赖）
