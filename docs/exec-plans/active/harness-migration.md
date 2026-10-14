@@ -191,6 +191,7 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 | 2026-10-14 | 1 | 向用户出具 D4–D8 白话解释与推荐（对话内），等待表态后回填本表并切换计划状态 | — | 用户明确要求解释后再决策（C7：不确定就提问）；用户同时要求「一次只问一个问题」，D4–D8 逐个确认完毕 |
 | 2026-10-14 | 1 | **决策全部落定，计划状态切换为已确认**：D4=MIT（公开）、D5=保持两份、D6=3.10+、D7=文档化、D8=上 Actions CI；等效 CI 决策同步落盘 `docs/CI.md` | `acb7ddd` | 用户逐个确认（一次一问）；D1–D8 全部闭合 |
 | 2026-10-14 | 1→2 | 远程仓库创建并推送完成：`https://github.com/a398275770-ctrl/styleforge`（公开，main + harnessing 双分支已跟踪）；TD-REPO-001 彻底关闭；**进入阶段 2（文档对齐）** | 本 commit | gh 认证自行恢复（前次 keyring 超时系瞬时故障），SSH 通道实测通过；仓库描述已填写 |
+| 2026-10-14 | 2 | **阶段 2 完成**：记录系统 8 件（LICENSE/AGENTS 60 行/ARCHITECTURE/core-beliefs/QUALITY_SCORE/SECURITY/index×2）+ 矛盾修正 4 处（README 必填化/注释/3.10+×3）+ `doc_lint.py` 门禁（死链/缺节反向实测均 exit 1） | `481c9be`、`0872510`、`fd7a672`、本 commit | 台账关闭 6 项（TD-CORE-002/004、TD-SCRIPTS-001/002、TD-DOCS-001/003），在册 8 项（P0×3 全在批次 2/3）；质量分 3.0→3.1 |
 | | | | | **未改业务代码自证**：本阶段仅新增 `docs/exec-plans/`、`docs/CI.md`、`scripts/analysis/repo_metrics.py`、`prompt-history.txt` 四类文档/分析文件；`styleforge.py`、`lib/sf_core.py`、`one-click-*.sh`、`styleforge.cmd`、`README.md`、`packs/**`、`docs/HARNESS-RULES.md` 均未触碰（git 就位后首批提交可用 `git diff` 复核）。沙箱实验（临时 pack `__td_probe__` 与 `/tmp` 下 `STYLEFORGE_HOME`）已全部清理，仓库无残留 |
 
 ---
@@ -204,3 +205,12 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 - [x] 每批改造有独立回滚方案（§4 表）
 - [x] 无只有标题没有分析的条目
 - [x] 未修改任何业务代码（无 git 无法跑 `git diff --stat`，以 §7 自证声明 + 上述文件清单代替；git 就位后首批提交复核）
+
+**阶段 2 验收对照**（2026-10-14 完成，规则 §5）：
+
+- [x] `AGENTS.md` 60 行（≤200），无教程式长文，四要素齐备（定位/命令/地图/硬约束/下一站）
+- [x] `ARCHITECTURE.md` 依赖方向与代码一致，抽样 3 处：① `styleforge.py:13` 仅 import sf_core ✓；② `sf_core.py` import 清单仅标准库（argparse/json/os/re/sys/tempfile/datetime/pathlib/typing/hashlib）✓；③ 三个入口脚本仅调用 `styleforge.py` ✓
+- [x] `docs/index.md` 每个链接可解析（`doc_lint.py` 机械校验 PASS）
+- [x] 旧文档比对：README 三处矛盾已修（TD-CORE-002/TD-SCRIPTS-002/D6 版本声明）；docstring「0600」失实声明并入 TD-CORE-003 证据（批次 3 随代码修复）
+- [x] `QUALITY_SCORE.md` 8 域分数各有依据（台账 ID + 复算命令）
+- [x] 文档校验能失败：实测注入死链 → exit 1；实测删必填节 → exit 1（记录于 commit `fd7a672`）
