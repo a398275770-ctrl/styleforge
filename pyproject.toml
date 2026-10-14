@@ -1,0 +1,38 @@
+# styleforge 工具链声明。
+# 注意：本文件刻意不写 [project] 表（不发布包），且不声明版本号——
+# 版本唯一声明点是 lib/sf_core.py 的 VERSION（规则 §6.1：禁止多声明点漂移）。
+# 运行时零第三方依赖（core-beliefs #16）；以下全部是开发/CI 工具链。
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".venv", "packs"]
+
+[tool.ruff.lint]
+# UP（typing 现代化）暂不启用：37 处存量改写属重构，待阶段 4 有测试保护后启用。
+select = ["E4", "E7", "E9", "F", "I", "W"]
+ignore = [
+    # BrokenPipeError 出口需要兜底吞掉一切写失败（styleforge.py main），行为正确。
+    "BLE001",
+    # 原子写清理路径的 try/except/pass：临时文件删除失败时静默，错误由主路径抛出。
+    "S110",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+# 宽松起步：不 strict。收紧在阶段 5 有覆盖率门禁后评估。
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+# 沙箱铁律：任何测试触碰 settings/style 都必须经 STYLEFORGE_HOME 隔离
+# （tests/conftest.py 的 autouse fixture 强制设置，未设置即失败）。
+
+[tool.coverage.run]
+source = ["lib", "styleforge"]
+
+[tool.coverage.report]
+# 阶段 5 接入门禁；阶段 3 先出报告建立基线。
+show_missing = true

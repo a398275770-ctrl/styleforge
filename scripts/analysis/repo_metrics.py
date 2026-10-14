@@ -38,9 +38,9 @@ def main(root: pathlib.Path) -> int:
         src = py.read_text(encoding='utf-8')
         lines = src.splitlines()
         tree = ast.parse(src)
-        funcs = [(n.name, n.end_lineno - n.lineno + 1) for n in ast.walk(tree)
+        funcs = [(n.name, (n.end_lineno or n.lineno) - n.lineno + 1) for n in ast.walk(tree)
                  if isinstance(n, ast.FunctionDef)]
-        longest = max((l for _, l in funcs), default=0)
+        longest = max((length for _, length in funcs), default=0)
         print(f'| {rel} | {len(lines)} | {len(funcs)} | {longest} |')
         if len(lines) > FILE_MAX_LINES:
             hotspots.append(

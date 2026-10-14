@@ -26,7 +26,6 @@ import hashlib
 import json
 import os
 import re
-import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -303,9 +302,10 @@ def current_state() -> Dict[str, Any]:
     settings, _ = load_settings_raw()
     active = settings.get(MANAGED_KEY)
     style_file = installed_style_path(active) if isinstance(active, str) and active else None
-    exists = bool(style_file and style_file.is_file())
     meta: Dict[str, str] = {}
-    if exists:
+    exists = False
+    if style_file is not None and style_file.is_file():
+        exists = True
         meta, _ = parse_frontmatter(read_bytes_as_text(style_file))
     return {
         'settings_path': str(settings_path()),

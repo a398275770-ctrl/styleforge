@@ -11,9 +11,18 @@ from typing import Any, Dict, List, Optional
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib'))
 
 from sf_core import (  # noqa: E402
-    VERSION, StyleForgeError, current_state, list_packs, list_settings_backups,
-    pack_dir, preview_style, remove_style, restore_settings, apply_style,
-    settings_path, styles_dir,
+    VERSION,
+    StyleForgeError,
+    apply_style,
+    current_state,
+    list_packs,
+    list_settings_backups,
+    pack_dir,
+    preview_style,
+    remove_style,
+    restore_settings,
+    settings_path,
+    styles_dir,
 )
 
 EXIT_OK = 0

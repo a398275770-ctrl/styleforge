@@ -4,3 +4,11 @@ __pycache__/
 
 # 用户私有提示词记录，只给用户自己看，不入库不推送（HARNESS-RULES §6.3）
 prompt-history.txt
+
+# 开发工具链（阶段 3）
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
