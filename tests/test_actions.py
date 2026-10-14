@@ -111,6 +111,45 @@ class TestRestoreSettings:
             restore_settings(bad)
 
 
+class TestInstallCompensation:
+    """TD-CLI-003：settings 写失败时回滚本次 style 写入（不留孤儿/半更新）。"""
+
+    @staticmethod
+    def _fail_settings_write(monkeypatch):
+        import sf_core
+
+        real = sf_core.atomic_write_text
+
+        def failing(path, content, mode=0o644):
+            if path.name == "settings.json":
+                raise OSError("注入：settings 写失败")
+            return real(path, content, mode)
+
+        monkeypatch.setattr(sf_core, "atomic_write_text", failing)
+
+    def test_new_style_removed_when_settings_fails(self, sandbox, monkeypatch):
+        import sf_core
+
+        self._fail_settings_write(monkeypatch)
+        with pytest.raises(OSError, match="注入"):
+            sf_core.apply_style("default", "default")
+        assert not sf_core.installed_style_path("default").exists()  # 无孤儿文件
+
+    def test_overwritten_style_restored_when_settings_fails(self, sandbox, monkeypatch):
+        import sf_core
+
+        sf_core.apply_style("first", "default")
+        sf_core.apply_style("second", "default")  # settings -> second
+        original_first = sf_core.read_bytes_as_text(sf_core.installed_style_path("first"))
+        self._fail_settings_write(monkeypatch)
+        # 重装 first（覆写旧文件 + settings 需改回）——settings 阶段失败
+        with pytest.raises(OSError, match="注入"):
+            sf_core.apply_style("first", "default", description="changed")
+        assert sf_core.read_bytes_as_text(sf_core.installed_style_path("first")) == original_first
+        settings, _ = sf_core.load_settings_raw()
+        assert settings["outputStyle"] == "second"  # settings 未被半改
+
+
 class TestCurrentState:
     def test_clean_state(self, sandbox):
         state = current_state()

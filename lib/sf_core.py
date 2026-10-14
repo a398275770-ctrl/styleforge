@@ -373,14 +373,28 @@ def apply_style(
         result["noop"] = True
         return result
 
+    original_style: Optional[str] = read_bytes_as_text(target) if style_existed else None
     atomic_write_text(target, content)
     if settings_changed:
         b = backup_settings(backup_tag)
         if b:
             result["backups"].append(str(b))
-        settings = dict(settings)
-        settings[MANAGED_KEY] = name
-        atomic_write_text(settings_path(), dump_settings(settings), mode=0o600)
+        new_settings = dict(settings)
+        new_settings[MANAGED_KEY] = name
+        try:
+            atomic_write_text(settings_path(), dump_settings(new_settings), mode=0o600)
+        except BaseException:
+            # TD-CLI-003：settings 写失败时回滚本次 style 写入——新建则删除
+            # （不留孤儿），覆写则恢复原内容（不留半更新）。补偿是尽力而为：
+            # 失败不吞原始错误；此前落盘的 settings 备份保留，restore 仍可用。
+            try:
+                if original_style is None:
+                    target.unlink(missing_ok=True)
+                else:
+                    atomic_write_text(target, original_style)
+            except OSError:
+                pass
+            raise
     result["noop"] = False
     return result
 
