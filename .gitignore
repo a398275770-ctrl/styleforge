@@ -1,0 +1,6 @@
+# Python 字节码缓存，不应入库（TD-REPO-002）
+__pycache__/
+*.pyc
+
+# 用户私有提示词记录，只给用户自己看，不入库不推送（HARNESS-RULES §6.3）
+prompt-history.txt
