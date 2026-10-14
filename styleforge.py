@@ -58,6 +58,13 @@ class Out:
         self._payload.setdefault("errors", []).append(message)
         self._exit = EXIT_BLOCKED
 
+    def fail(self) -> None:
+        """Mark the operation as blocked without emitting a message (doctor's checks)."""
+        self._exit = EXIT_BLOCKED
+
+    def is_blocked(self) -> bool:
+        return self._exit != EXIT_OK
+
     def info(self, message: str) -> None:
         if not self.json_mode and not self.quiet:
             print(message)
@@ -218,7 +225,7 @@ def cmd_doctor(args: argparse.Namespace, out: Out) -> int:
         if not out.json_mode:
             print(line)
         if not ok:
-            out._exit = EXIT_BLOCKED
+            out.fail()
 
     home = Path(os.environ.get("STYLEFORGE_HOME") or os.environ.get("HOME") or "~")
     settings = settings_path()
@@ -248,7 +255,7 @@ def cmd_doctor(args: argparse.Namespace, out: Out) -> int:
     check("存在可用 pack", bool(packs), ", ".join(packs))
 
     out.set("checks", checks)
-    if out._exit == EXIT_OK:
+    if not out.is_blocked():
         out.info("  一切就绪。")
     return out.finish()
 
