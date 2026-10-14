@@ -56,6 +56,8 @@ pre-commit hook 已挂载（`.githooks/`）；豁免与各检查的修复指引�
 ## 工作方式
 
 - 改动前读相关 `docs/`，改动后同步更新对应文档与 `docs/index.md`
-- 提交粒度单一职责；bug 修复与纯重构严格分开提交（重构红线见 core-beliefs.md）
+- 提交粒度单一职责（Conventional Commits 前缀）；bug 修复与纯重构严格分开提交（重构红线见 core-beliefs.md）
+- 会话最后一次提交必须过全部本地门禁，message 注明 `[已测试]` / `[未测试]` 及验证方式
 - 交互式决策确认后必须落盘到仓库文档（对话里说过 = 不存在）
 - 计划写在 `docs/exec-plans/active/`，完成后移入 `completed/`
+- `prompt-history.txt`：用户私有提示词记录（已 gitignore，不入库）。每轮把用户提示词结构化追加到文件末尾，纯 append 不改写历史；少于 10 字的寒暄不记录；智能体只写不读
