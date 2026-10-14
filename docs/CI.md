@@ -1,6 +1,6 @@
 # CI 配置决定
 
-> 依据 `docs/HARNESS-RULES.md` §3（框架识别与条件式 GitHub CI 配置）与附录 C 模板。
+> 依据《存量项目 Harness 工程化规则》§3（框架识别与条件式 GitHub CI 配置）与附录 C 模板；施工图已归档至 `exec-plans/completed/harness-2026-10-14.md`。
 > 本文件在阶段 1 建立（框架判定与现状）；交互询问与落地说明在阶段 3 补齐。
 
 ## 1. 框架判定

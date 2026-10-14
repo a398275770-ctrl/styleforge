@@ -19,11 +19,8 @@
 | [SECURITY.md](SECURITY.md) | 安全模型、信任边界、已知问题 | doc_lint PASS |
 | [design-docs/index.md](design-docs/index.md) | 设计文档索引 | doc_lint PASS |
 | [design-docs/core-beliefs.md](design-docs/core-beliefs.md) | 第一性原则与裁决依据 | doc_lint PASS |
-| [exec-plans/active/harness-migration.md](exec-plans/active/harness-migration.md) | 进行中的改造计划（含决策日志） | doc_lint PASS |
+| [exec-plans/completed/harness-migration.md](exec-plans/completed/harness-migration.md) | 已竣工的改造计划（含全程决策日志） | doc_lint PASS |
 | [exec-plans/tech-debt-tracker.md](exec-plans/tech-debt-tracker.md) | 技术债台账 | doc_lint PASS |
-| [HARNESS-RULES.md](HARNESS-RULES.md) | harness 改造施工图（施工期常驻，竣工后归档） | 施工中，不参与门禁 |
+| [exec-plans/completed/harness-2026-10-14.md](exec-plans/completed/harness-2026-10-14.md) | 施工图归档（竣工附记含 §14.6 自检与母本回流建议） | 已归档，不参与门禁 |
 | [turn-project-to-harness-rules.md](turn-project-to-harness-rules.md) | 施工图母本副本（D3 保留） | 施工中，不参与门禁 |
 
-## 待建（随阶段推进）
-
-- `exec-plans/completed/`：已归档计划——阶段 4/5 逐批移入

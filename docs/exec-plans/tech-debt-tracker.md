@@ -1,6 +1,6 @@
 # 技术债台账（tech-debt-tracker）
 
-> 字段定义见 `docs/HARNESS-RULES.md` 附录 B。
+> 字段定义见施工图附录 B（已归档：`completed/harness-2026-10-14.md`）；本表头即长期约定。
 > 状态流转：待处理 → 处理中 → 已完成 / 已豁免（须附理由与到期时间）。
 > 登记纪律（规则 §5 阶段 1）：只登记不顺手修；每条必须有文件:行级证据；「bug 修复」与「业务变更」与纯重构严格分列。
 > 基线度量：`python3 -I scripts/analysis/repo_metrics.py .`（2026-10-14 基线：业务代码零超长热点，`lib/__pycache__` 1 处 FAIL）。

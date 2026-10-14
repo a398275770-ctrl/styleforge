@@ -36,7 +36,7 @@ MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
 
 def check_links(root: pathlib.Path, failures: list[str]) -> None:
     for doc in LINTED_DOCS + [
-        "docs/exec-plans/active/harness-migration.md",
+        "docs/exec-plans/completed/harness-migration.md",
         "docs/exec-plans/tech-debt-tracker.md",
     ]:
         path = root / doc
