@@ -2,9 +2,9 @@
 
 ## 0. 元信息
 - 项目 / 仓库：styleforge（`/home/admin/Projects/新提示词/styleforge`）
-- 分支：harnessing（**尚未存在**——本仓库当前不是 git 仓库，批次 0 建立，见 TD-REPO-001 / D1）
-- 计划版本 / 日期：v1.0 / 2026-10-14
-- 状态：**待确认**
+- 分支：harnessing（已于 2026-10-14 建立；main = 零改动基线快照 `59076a0`，harnessing 承载全部改造提交）
+- 计划版本 / 日期：v1.1 / 2026-10-14
+- 状态：**待确认**（D1–D3 已答复、批次 0 本地部分已执行；D4–D8 已向用户出具白话解释，待表态后整体确认）
 - 规则依据：`docs/HARNESS-RULES.md` §5 五阶段流程；本计划为阶段 1 产出，按附录 A 结构编写
 - 扫描方法：全量人工读码（仓库共 10 个文件、约 1000 行业务代码）+ AST 度量（`scripts/analysis/repo_metrics.py`）+ 沙箱实测（`STYLEFORGE_HOME=$(mktemp -d)` 隔离，未触碰真实 `~/.claude`）
 
@@ -160,6 +160,8 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 
 ## 6. 待人工决策清单
 
+> **2026-10-14 答复记录**：D1=全干（git init + 远程，本地部分已执行完毕）；D2=选 b（修正 README 为必填，纯文档）；D3=保留两份规则文档、不处理（TD-DOCS-002 据此豁免）；D4/D5/D6/D7/D8=用户要求先获得通俗解释再决定，解释已在本轮对话出具，答复待回填。
+
 | 编号 | 问题 | 为什么需要人判断 | 影响范围 |
 |---|---|---|---|
 | D1 | **是否 `git init`？是否配远程仓库（GitHub/私有）？** | 规则 C5/C6/§7 的可追溯性全部建立在版本管理上；仓库目前无 git。远程有无直接决定 CI 宿主形态 | 批次 0 全部、阶段 3 形态 |
@@ -176,6 +178,8 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 | 日期 | 阶段 | 动作 | 关联 commit | 决策与理由 |
 |---|---|---|---|---|
 | 2026-10-14 | 1 | 全量扫描完成：10 项子任务（§5 阶段 1.1）、18 项问题登记、度量基线固化、框架判定=其他类型（非 Tauri，证据落盘 `docs/CI.md`） | —（尚无 git，D1 待决） | 沙箱实测坐实 3 个 bug 类问题（TD-CORE-001/002/003）；业务代码零改动声明见下 |
+| 2026-10-14 | 1→批次 0 | 用户答复 D1=全干 / D2=b / D3=保留；执行 git init + `.gitignore` + 基线提交 `59076a0`（main，零改动快照）+ `harnessing` 分支 + 阶段 1 产出提交 `2fecb40`；TD-REPO-001/002 关闭、TD-DOCS-002 豁免、TD-CORE-002 定向（b 方案） | `59076a0`、`2fecb40` | 基线快照即「未改业务代码」的 git 自证；gh CLI 已装但认证超时（keyring），远程创建待用户提供途径（见 §6 答复记录） |
+| 2026-10-14 | 1 | 向用户出具 D4–D8 白话解释与推荐（对话内），等待表态后回填本表并切换计划状态 | — | 用户明确要求解释后再决策（C7：不确定就提问） |
 | | | | | **未改业务代码自证**：本阶段仅新增 `docs/exec-plans/`、`docs/CI.md`、`scripts/analysis/repo_metrics.py`、`prompt-history.txt` 四类文档/分析文件；`styleforge.py`、`lib/sf_core.py`、`one-click-*.sh`、`styleforge.cmd`、`README.md`、`packs/**`、`docs/HARNESS-RULES.md` 均未触碰（git 就位后首批提交可用 `git diff` 复核）。沙箱实验（临时 pack `__td_probe__` 与 `/tmp` 下 `STYLEFORGE_HOME`）已全部清理，仓库无残留 |
 
 ---
