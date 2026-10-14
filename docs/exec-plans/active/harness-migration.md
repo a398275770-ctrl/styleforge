@@ -189,7 +189,8 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 | 2026-10-14 | 1 | 全量扫描完成：10 项子任务（§5 阶段 1.1）、18 项问题登记、度量基线固化、框架判定=其他类型（非 Tauri，证据落盘 `docs/CI.md`） | —（尚无 git，D1 待决） | 沙箱实测坐实 3 个 bug 类问题（TD-CORE-001/002/003）；业务代码零改动声明见下 |
 | 2026-10-14 | 1→批次 0 | 用户答复 D1=全干 / D2=b / D3=保留；执行 git init + `.gitignore` + 基线提交 `59076a0`（main，零改动快照）+ `harnessing` 分支 + 阶段 1 产出提交 `2fecb40`；TD-REPO-001/002 关闭、TD-DOCS-002 豁免、TD-CORE-002 定向（b 方案） | `59076a0`、`2fecb40` | 基线快照即「未改业务代码」的 git 自证；gh CLI 已装但认证超时（keyring），远程创建待用户提供途径（见 §6 答复记录） |
 | 2026-10-14 | 1 | 向用户出具 D4–D8 白话解释与推荐（对话内），等待表态后回填本表并切换计划状态 | — | 用户明确要求解释后再决策（C7：不确定就提问）；用户同时要求「一次只问一个问题」，D4–D8 逐个确认完毕 |
-| 2026-10-14 | 1 | **决策全部落定，计划状态切换为已确认**：D4=MIT（公开）、D5=保持两份、D6=3.10+、D7=文档化、D8=上 Actions CI；等效 CI 决策同步落盘 `docs/CI.md` | 本 commit | 改造可进入阶段 2；远程创建为遗留操作项（gh keyring 超时，等用户修复登录或给地址） |
+| 2026-10-14 | 1 | **决策全部落定，计划状态切换为已确认**：D4=MIT（公开）、D5=保持两份、D6=3.10+、D7=文档化、D8=上 Actions CI；等效 CI 决策同步落盘 `docs/CI.md` | `acb7ddd` | 用户逐个确认（一次一问）；D1–D8 全部闭合 |
+| 2026-10-14 | 1→2 | 远程仓库创建并推送完成：`https://github.com/a398275770-ctrl/styleforge`（公开，main + harnessing 双分支已跟踪）；TD-REPO-001 彻底关闭；**进入阶段 2（文档对齐）** | 本 commit | gh 认证自行恢复（前次 keyring 超时系瞬时故障），SSH 通道实测通过；仓库描述已填写 |
 | | | | | **未改业务代码自证**：本阶段仅新增 `docs/exec-plans/`、`docs/CI.md`、`scripts/analysis/repo_metrics.py`、`prompt-history.txt` 四类文档/分析文件；`styleforge.py`、`lib/sf_core.py`、`one-click-*.sh`、`styleforge.cmd`、`README.md`、`packs/**`、`docs/HARNESS-RULES.md` 均未触碰（git 就位后首批提交可用 `git diff` 复核）。沙箱实验（临时 pack `__td_probe__` 与 `/tmp` 下 `STYLEFORGE_HOME`）已全部清理，仓库无残留 |
 
 ---
