@@ -23,8 +23,8 @@ echo "== [2/6] ruff format =="
 echo "== [3/6] mypy 类型检查 =="
 "$PY" -m mypy styleforge.py lib/sf_core.py scripts/analysis/repo_metrics.py scripts/analysis/doc_lint.py
 
-echo "== [4/6] pytest 测试 =="
-"$PY" -m pytest
+echo "== [4/6] pytest 测试（含覆盖率门禁 fail_under=90） =="
+"$PY" -m pytest --cov=lib --cov=styleforge --cov-report=term -q
 
 echo "== [5/6] 度量与指纹（repo_metrics）+ 文档门禁（doc_lint） =="
 "$PY" -I scripts/analysis/repo_metrics.py .

@@ -37,5 +37,6 @@ addopts = "-q"
 source = ["lib", "styleforge"]
 
 [tool.coverage.report]
-# 阶段 5 接入门禁；阶段 3 先出报告建立基线。
+# 门禁下限（阶段 5 接入；基线 94%：sf_core 98% / cli 89%）
+fail_under = 90
 show_missing = true

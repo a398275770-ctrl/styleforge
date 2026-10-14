@@ -3,6 +3,21 @@
 > 一条命令复现全部门禁：`sh scripts/check.sh`（CI 与 pre-commit 跑的就是它）。
 > Python 解释器自动探测：`$PYTHON` > 仓库 `.venv/bin/python` > PATH 的 `python3`。
 
+## 测试策略与分层（阶段 5）
+
+| 层 | 文件 | 职责 | 时长约束 |
+|---|---|---|---|
+| 单元 | `test_names` / `test_frontmatter` / `test_io` / `test_edge` / `test_permissions` | 纯函数与文件 IO 边界，无 CLI 依赖 | 每文件 < 1s |
+| 集成 | `test_actions` | core 动作全流程（沙箱 home） | < 1s |
+| 端到端 | `test_cli` | `main()` 入口、退出码、`--json` 契约、文本渲染 | < 1s |
+| 结构 | `test_structure` | 依赖方向 / 版本单点（架构不变量，非行为） | < 1s |
+| 资产 | `test_packs` | pack 指纹与 README 登记一致 | < 1s |
+
+- 全量 124 用例 < 2s；覆盖 94%（sf_core 98% / cli 89%），门禁下限 90%
+- **沙箱铁律**（conftest autouse）：一切写入强制 `STYLEFORGE_HOME` → tmp，物理隔离真实 `~/.claude`
+- 可维护性规则：用例名描述行为；禁止魔法数字（用常量/具名 fixture）；禁止顺序依赖（每用例独立沙箱）
+- 防假测试：注入缺陷抽查累计 4 处全有效（名字校验禁用→6 红；损坏 JSON 检测失效→2 红；pack 篡改→指纹红；TD-CLI-004 即由断言发现）
+
 ## 检查项
 
 | # | 检查 | 触发时机 | 失败含义 | 修复指引 |
