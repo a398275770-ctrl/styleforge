@@ -194,6 +194,8 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 | 2026-10-14 | 2 | **阶段 2 完成**：记录系统 8 件（LICENSE/AGENTS 60 行/ARCHITECTURE/core-beliefs/QUALITY_SCORE/SECURITY/index×2）+ 矛盾修正 4 处（README 必填化/注释/3.10+×3）+ `doc_lint.py` 门禁（死链/缺节反向实测均 exit 1） | `481c9be`、`0872510`、`fd7a672`、本 commit | 台账关闭 6 项（TD-CORE-002/004、TD-SCRIPTS-001/002、TD-DOCS-001/003），在册 8 项（P0×3 全在批次 2/3）；质量分 3.0→3.1 |
 | 2026-10-14 | 3 | **阶段 3 完成**：pyproject 工具链（lint/mypy 零违规基线）+ 88 用例最小测试集（沙箱铁律）+ `check.sh` 六步一条命令 + pre-commit hook + `ci.yml`（py3.10/3.14 矩阵 + pip-audit）+ `docs/gates.md`；**四类违规注入实测全部拦截**：① 越层 import→结构测试红 ② 501 行文件→repo_metrics 红 ③ 缓存入库→追踪检查红 ④ 死链/缺节→doc_lint 红（阶段 2 实测）；另注入缺陷抽查（禁用名字校验→6 用例红）×1 | `f05ea8b`、`c2f50a2`、`cb1e623` | 台账关闭 3 项（TD-GATE-001/002、TD-PACKS-001），TD-TEST-001 转处理中；在册 6 项（P0×2：TD-CORE-003 批次 3、TD-TEST-001 补全批次 5） |
 | 2026-10-14 | 3 | **CI 首跑结果回填**：首跑 py3.14 绿 / py3.10 红——pip-audit 正确拦截 runner 预装 setuptools 79.0.1 的 PYSEC-2026-3447（门禁按设计工作，非误报）；修复=工具链安装前升级 pip/setuptools；二跑双矩阵全绿 | `68e211e` | 双版本矩阵首跑即抓到真实问题，验证 D6 决策与门禁价值；阶段 3 验收全部通过 |
+| 2026-10-14 | 4 | **批次 3（bug 修复，每项独立提交+回归测试）**：TD-CORE-003 权限守恒（沿用已有权限+新建 0600，8 用例 TDD 红→绿，实测 600→install→仍 600）；TD-CORE-001 统一一份卸载前备份（四组合行为对照） | `fef3456`、`e6c16fa` | 修复前先拍全命令 `--json` 行为基线（/tmp 对拍脚本，时间戳归一化） |
+| 2026-10-14 | 4 | **批次 4（纯重构，行为守恒对拍）**：TD-CLI-001 Out.fail()/is_blocked() 公有化；TD-CLI-003 install 补偿回滚（新建回删/覆写恢复，2 注入用例）；UP 规则启用（typing 现代化 33 处，阶段 3 预告项）；**TD-CLI-002 实测证伪关闭**（`'--json' in argv` 系列表成员判断非子串，阶段 1 登记分析有误，如实改判） | `a0d5df8`、`7eee9bc`、`7c269f1` | 对拍证据：基线 → 阶段 4 结束，唯一 diff = TD-CORE-001 的备份 2→1（显式登记的 bug 修复），其余全命令逐字节一致；门禁每提交全绿（pre-commit 自动执行），CI 三连绿 |
 | | | | | **未改业务代码自证**：本阶段仅新增 `docs/exec-plans/`、`docs/CI.md`、`scripts/analysis/repo_metrics.py`、`prompt-history.txt` 四类文档/分析文件；`styleforge.py`、`lib/sf_core.py`、`one-click-*.sh`、`styleforge.cmd`、`README.md`、`packs/**`、`docs/HARNESS-RULES.md` 均未触碰（git 就位后首批提交可用 `git diff` 复核）。沙箱实验（临时 pack `__td_probe__` 与 `/tmp` 下 `STYLEFORGE_HOME`）已全部清理，仓库无残留 |
 
 ---
@@ -227,3 +229,12 @@ styleforge.cmd ───────┘        (CLI 层)         (core 层)     
 - [x] 每个门禁失败信息含修复指引（repo_metrics/doc_lint/结构测试断言消息均内置）
 - [x] 门禁本地一条命令复现（check.sh；解释器自动探测 .venv，不依赖激活）
 - [x] 豁免机制显式可审计（SKIP_SF_CHECK 显式跳过须在 message 注明原因；pyproject ignore 带理由注释；过期 noqa 由 RUF100 抓出；CI 不可绕过）
+
+**阶段 4 验收对照**（2026-10-14 完成，规则 §5）：
+
+- [x] 每批次结束门禁全绿、测试全过（98 用例；pre-commit 每提交自动执行全套，CI 三连绿）
+- [x] 行为守恒证据：全命令 `--json` 对拍（固定沙箱、时间戳归一化）——重构基线与终态唯一 diff = TD-CORE-001 备份 2→1（显式登记的 bug 修复）；TD-CORE-003 权限变化不影响输出面（专项测试覆盖）；注入字节不变由 pack md5 断言背书
+- [x] 行为变更与 bug 修复均在台账显式标注且**单独提交**（`fef3456` 权限 / `e6c16fa` 双备份；纯重构 `a0d5df8`/`7eee9bc`/`7c269f1` 与修复零混合）
+- [x] 重复代码度量：唯一重复项（shell 探测 12 行）按 D5 决策保留，前后无变化（有决策依据，非未处理）
+- [x] 复杂度指标：热点文件数前后均 0（阈值 500 行/80 函数）；最长函数 40→53 行（apply_style 补偿逻辑，仍远低于阈值）；无恶化，符合「起点干净、阶段 4 以修 bug 为主」的项目实际
+- [x] 计划进度日志逐条对应 commit（§7 六条日志 ↔ `fef3456`/`e6c16fa`/`a0d5df8`/`7eee9bc`/`7c269f1`）
